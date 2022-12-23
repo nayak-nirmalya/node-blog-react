@@ -44,6 +44,8 @@ class Feed extends Component {
     socket.on('posts', (data) => {
       if (data.action === 'create') {
         this.addPost(data.post)
+      } else if (data.action === 'update') {
+        this.updatedPost(data.post)
       }
     })
   }
@@ -60,6 +62,19 @@ class Feed extends Component {
       return {
         posts: updatedPosts,
         totalPosts: prevState.totalPosts + 1,
+      }
+    })
+  }
+
+  updatedPost = (post) => {
+    this.setState((prevState) => {
+      const updatedPosts = [...prevState.posts]
+      const updatePostIndex = updatedPosts.findIndex((p) => p._id === post._id)
+      if (updatePostIndex > -1) {
+        updatedPosts[updatePostIndex] = post
+      }
+      return {
+        posts: updatedPosts,
       }
     })
   }
@@ -173,26 +188,26 @@ class Feed extends Component {
         return res.json()
       })
       .then((resData) => {
-        const post = {
-          _id: resData.post._id,
-          title: resData.post.title,
-          content: resData.post.content,
-          creator: resData.post.creator,
-          createdAt: resData.post.createdAt,
-        }
+        // const post = {
+        //   _id: resData.post._id,
+        //   title: resData.post.title,
+        //   content: resData.post.content,
+        //   creator: resData.post.creator,
+        //   createdAt: resData.post.createdAt,
+        // }
         this.setState((prevState) => {
-          let updatedPosts = [...prevState.posts]
-          if (prevState.editPost) {
-            const postIndex = prevState.posts.findIndex(
-              (p) => p._id === prevState.editPost._id,
-            )
-            updatedPosts[postIndex] = post
-          }
+          // let updatedPosts = [...prevState.posts]
+          // if (prevState.editPost) {
+          //   const postIndex = prevState.posts.findIndex(
+          //     (p) => p._id === prevState.editPost._id,
+          //   )
+          //   updatedPosts[postIndex] = post
+          // }
           // else if (prevState.posts.length < 2) {
           //   updatedPosts = prevState.posts.concat(post)
           // }
           return {
-            posts: updatedPosts,
+            // posts: updatedPosts,
             isEditing: false,
             editPost: null,
             editLoading: false,
